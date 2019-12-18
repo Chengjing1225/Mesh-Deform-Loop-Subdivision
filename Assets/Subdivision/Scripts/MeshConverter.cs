@@ -58,7 +58,7 @@ public class MeshConverter
     }
 
     /// <summary>
-    /// 转换成新的网格信息
+    /// 将shape转换成新的网格信息
     /// </summary>
     /// <param name="shape"></param>
     /// <returns>网格</returns>
@@ -88,6 +88,65 @@ public class MeshConverter
 
                 triangles.AddRange(new int[] { 4 * n, 4 * n + 1, 4 * n + 2, 4 * n, 4 * n + 2, 4 * n + 3 });
                 normals.AddRange(new UnityEngine.Vector3[] { normal, normal, normal,normal });
+            }
+            n++;
+        }
+
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        //mesh.normals = normals.ToArray();
+        mesh.RecalculateBounds();
+        mesh.RecalculateNormals();
+        mesh.RecalculateTangents();
+
+
+        return mesh;
+    }
+
+
+    /// <summary>
+    /// 将平面shape转换成新的网格信息
+    /// </summary>
+    /// <param name="shape">平面shape</param>
+    /// <returns>平面网格信息</returns>
+    public Mesh ConvertToPlaneMesh(Shape shape)
+    {
+        Mesh mesh = new Mesh();
+        List<UnityEngine.Vector3> vertices = new List<UnityEngine.Vector3>();
+        List<int> triangles = new List<int>();
+        List<UnityEngine.Vector3> normals = new List<UnityEngine.Vector3>();
+
+        vertices.AddRange(ConvertToVectors(shape.AllPoints.ToArray()));
+        int n = 0;
+        UnityEngine.Vector3 normal;
+        foreach (var face in shape.Faces)
+        {
+            //Debug.Log(face.AllPoints.Count);
+           
+            //int length = vertices.Count;
+            //normal = calculateCorss(vertices[length - 2] - vertices[length - 3], vertices[length - 1] - vertices[length - 2]);
+
+            if (face.AllPoints.Count == 3)
+            {
+                UnityEngine.Vector3[] faceVertices = ConvertToVectors(face.AllPoints.ToArray());
+                for(int u = 0; u < 3; u++)
+                {
+                    triangles.Add(vertices.FindIndex(v => v == faceVertices[u]));
+                }
+                
+                //triangles.AddRange(new int[] { 3 * n, 3 * n + 1, 3 * n + 2 });
+                //normals.AddRange(new UnityEngine.Vector3[] { normal, normal, normal });
+            }
+            else if (face.AllPoints.Count == 4)
+            {
+
+                //triangles.AddRange(new int[] { 4 * n, 4 * n + 1, 4 * n + 2, 4 * n, 4 * n + 2, 4 * n + 3 });
+                //normals.AddRange(new UnityEngine.Vector3[] { normal, normal, normal, normal });
+                UnityEngine.Vector3[] faceVertices = ConvertToVectors(shape.AllPoints.ToArray());
+                for (int u = 0; u < 4; u++)
+                {
+                    triangles.Add(vertices.FindIndex(v => v == faceVertices[u]));
+                }
             }
             n++;
         }

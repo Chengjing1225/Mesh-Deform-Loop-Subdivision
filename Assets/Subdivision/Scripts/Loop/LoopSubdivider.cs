@@ -19,6 +19,19 @@ namespace Subdivision.Core {
 
             return subdivided;
         }
+        public Shape SubdividePlane(Shape shape)
+        {
+
+            Shape subdivided = new Shape();
+            
+            CreatePlaneEdgePoints(shape);
+            
+            CreatePlaneVertexPoints(shape);
+            
+            CreateFaces(shape, subdivided);
+
+            return subdivided;
+        }
         
         /// <summary>
         /// 创建子节点
@@ -35,26 +48,17 @@ namespace Subdivision.Core {
                         Average(
                             edge.Points[0],
                             edge.Points[1]);
-
-
                     edge.EdgePoint = new Point(position);
                 }
                 else                //内部子节点
                 {
                     Point thirdP0 = edge.Faces[0].AllPoints.SingleOrDefault(p => (p != edge.Points[0] && p != edge.Points[1]));
                     Point thirdP1 = edge.Faces[1].AllPoints.SingleOrDefault(p => (p != edge.Points[0] && p != edge.Points[1]));
-
                     Vector3 position =
                         edge.Points[0].Position * 0.375f
                         + edge.Points[1].Position * 0.375f
                         + thirdP0.Position * 0.125f
                         + thirdP1.Position * 0.125f;
-                    //Vector3 position =
-                    //    edge.Points[0].Position * 0.5f
-                    //    + edge.Points[1].Position * 0.5f
-                    //    + thirdP0.Position * 0.5f
-                    //    + thirdP1.Position * 0.5f;
-
                     edge.EdgePoint = new Point(position);
                 }
             }
@@ -114,6 +118,39 @@ namespace Subdivision.Core {
 
             return new Point(Vector3.Average(positions));
         }
+
+        /// <summary>
+        /// 创建平面子节点
+        /// </summary>
+        /// <param name="shape"></param>
+        private void CreatePlaneEdgePoints(Shape shape)
+        {
+            List<Edge> edges = shape.AllEdges;
+            foreach (Edge edge in edges)
+            {
+                Vector3 position =
+                        Average(
+                            edge.Points[0],
+                            edge.Points[1]);
+                edge.EdgePoint = new Point(position);
+            }
+        }
+
+        /// <summary>
+        /// 计算平面父节点的位置
+        /// </summary>
+        /// <param name="shape"></param>
+        private void CreatePlaneVertexPoints(Shape shape)
+        {
+            List<Point> allPoints = shape.AllPoints;
+            List<Edge> allEdges = shape.AllEdges;
+
+            foreach (Point oldPoint in allPoints)
+            {
+                oldPoint.Successor = oldPoint;
+            }
+        }
+
 
         /// <summary>
         /// 创建面

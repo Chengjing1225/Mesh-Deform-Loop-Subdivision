@@ -5,7 +5,7 @@ using Subdivision.Core;
 
 public class DeformerObject : MonoBehaviour {
 
-    public new Camera camera;
+     Camera camera;
     MeshFilter meshFilter;
     MeshConverter converter;
 
@@ -27,7 +27,7 @@ public class DeformerObject : MonoBehaviour {
 
 
     void Start () {
-        Main mainCameraScript = new Main();
+        camera = Camera.main;
         meshFilter = gameObject.GetComponent<MeshFilter>();
         converter = new MeshConverter();
         shape = converter.OnConvert(meshFilter.mesh);
