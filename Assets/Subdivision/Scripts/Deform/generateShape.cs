@@ -6,7 +6,7 @@ using Subdivision.Core;
 using UnityEngine;
 
 
-class generateShape : MonoBehaviour
+class generateShape 
 {
     //public Shape generate(Shape shape, ADJDEFPOINT adjPoints)
     //{

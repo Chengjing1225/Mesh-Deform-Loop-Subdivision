@@ -9,32 +9,17 @@ using System.Collections.Generic;
 public class Main : MonoBehaviour
 {
 
-    public Text text;
-    public MeshFilter meshFilter;
-    MeshConverter converter;
-    LoopSubdivider subdivider;
+    GameObject nowObj;
+    GameObject lastObj;
 
-    //public Camera camera;
-    //private float radius = 0.3f;
-    //private float force = 0.3f;
-    //private float distance = 100;
-
-    //struct defPoint
-    //{
-    //    public UnityEngine.Vector3 defPosition;
-    //    public UnityEngine.Vector3 defNormal;
-    //};
-
-    public Shape shape;
-
-    // Use this for initialization
-    //void Start()
     void Start()
     {
-        converter = new MeshConverter();
-        subdivider = new LoopSubdivider();
-        shape = converter.OnConvert(meshFilter.mesh);
-        text.text = shape.AllPoints.Count.ToString();
+    }
+
+    bool first = true;
+    private void Update()
+    {
+        selectedObject();
     }
 
     /// <summary>
@@ -42,24 +27,53 @@ public class Main : MonoBehaviour
     /// </summary>
     public void HandleOnSundive()
     {
-        shape = subdivider.Subdivide(shape);
-        text.text = shape.AllPoints.Count.ToString();
-        meshFilter.mesh = converter.ConvertToMesh(shape);
+        nowObj.GetComponent<SubGameObject>().RunSub();        
     }
 
     public void GenerateSubCube()
     {
-        //GameObject cube = new GameObject("SubCube");
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.name = "SubCube";
         cube.AddComponent<GenerateCube>();
         cube.transform.position = new UnityEngine.Vector3(0, 0, 2);
-        //GenerateCube subCube = new GenerateCube();
-        //Mesh mesh = subCube.IntegralMesh();
-        //MeshFilter mf = cube.AddComponent<MeshFilter>();
-        //mf.mesh = mesh;
-        //cube.AddComponent<MeshCollider>();
     }
+
+    void selectedObject()
+    {
+        RaycastHit hit;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (hit.transform.gameObject != lastObj)
+            {
+                first = true;
+            }
+        }
+        else
+            return;
+        if (Physics.Raycast(ray, out hit) && Input.GetMouseButtonDown(0) && first ) 
+        {
+            nowObj = hit.transform.gameObject;
+            nowObj.AddComponent<SubGameObject>();
+            nowObj.AddComponent<DeformerObject>();
+            first = false;
+        }
+        if (Input.GetMouseButtonUp(0) && !false)
+            first = true;
+       
+       if(lastObj != nowObj )
+        {
+            if (lastObj != null)
+            {
+                Destroy(lastObj.GetComponent<SubGameObject>());
+                Destroy(lastObj.GetComponent<DeformerObject>());                
+            }                
+            lastObj = nowObj;
+        }
+        else  if (lastObj == nowObj && nowObj != null)
+             first = false;
+        
+     }
  
 }
 

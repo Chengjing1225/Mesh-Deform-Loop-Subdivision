@@ -37,7 +37,7 @@ public class GenerateCube : MonoBehaviour
         gameObject.GetComponent<MeshFilter>().mesh = IntegralMesh();
         text.text = gameObject.GetComponent<MeshFilter>().mesh.vertexCount.ToString();
         gameObject.AddComponent<MeshCollider>();
-        gameObject.AddComponent<DeformerObject>();
+        //gameObject.AddComponent<DeformerObject>();
 
         gameObject.transform.Rotate(new UnityEngine.Vector3(50, 30, 40));
     }
@@ -146,7 +146,6 @@ public class GenerateCube : MonoBehaviour
             converter = new MeshConverter();
             subdivider = new LoopSubdivider();
             shape = converter.OnConvert(mesh);
-            shape = subdivider.SubdividePlane(shape);
             shape = subdivider.SubdividePlane(shape);
             shape = subdivider.SubdividePlane(shape);
             shape = subdivider.SubdividePlane(shape);

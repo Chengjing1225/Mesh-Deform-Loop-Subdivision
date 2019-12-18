@@ -34,8 +34,10 @@ public class DeformerObject : MonoBehaviour {
         
 	}
 
+
     public void Update()
     {
+        
         mouseClickModel();
     }
 
@@ -75,8 +77,8 @@ public class DeformerObject : MonoBehaviour {
             }
         }
         if (!first && Input.GetMouseButton(0))
-            {
-                clickUpPos = getMousePosition();
+        {
+            clickUpPos = getMousePosition();
         }
         dragPos = clickUpPos - clickDownPos;
         if (!first && Input.GetMouseButtonUp(0))
@@ -84,7 +86,10 @@ public class DeformerObject : MonoBehaviour {
             print("dragPos" + dragPos);
             first = true;
             if (dragPos != new UnityEngine.Vector3(0, 0, 0))
+            {
                 Deformation();
+            }
+                
         }
     }
     /// <summary>
@@ -92,6 +97,9 @@ public class DeformerObject : MonoBehaviour {
     /// </summary>
     public void Deformation()
     {
+        meshFilter = gameObject.GetComponent<MeshFilter>();
+        shape = converter.OnConvert(meshFilter.mesh);
+
         Subdivision.Core.Vector3 dir = new Subdivision.Core.Vector3(dragPos.x, dragPos.y, dragPos.z);
         deform deform = new deform(defPoint, shape, dir);
         deform.force = force;
